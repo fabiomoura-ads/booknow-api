@@ -1,0 +1,30 @@
+CREATE TABLE usuario (
+	id bigserial NOT NULL PRIMARY KEY,
+	nome character varying(150),
+	email character varying(100),
+	senha character varying(30),
+	data_cadastro date DEFAULT NOW()
+);
+
+
+CREATE TABLE veiculo (
+	id bigserial NOT NULL PRIMARY KEY,
+	nome character varying(100) NOT NULL,
+	marca character varying(100) NOT NULL,
+	placa character varying(20) NOT NULL,	
+	ano character varying(4) NOT NULL,
+	situacao character varying(30) NOT NULL CHECK ( situacao in ('DISPONIVEL', 'INDISPONIVEL', 'ALUGADO', 'RESERVADO' ) ),
+	valor_dia numeric(16,2) NOT NULL
+);
+
+
+CREATE TABLE reserva (
+	id bigserial NOT NULL PRIMARY KEY,
+	id_usuario bigint REFERENCES usuario(id) NOT NULL,
+	id_veiculo bigint REFERENCES veiculo(id) NOT NULL,
+	data_inicio date NOT NULL,
+	data_fim date NOT NULL,
+	situacao character varying(30) NOT NULL CHECK ( situacao in ( 'EFETIVADA', 'CANCELADA', 'CONCLUIDA' ) ),
+	valor_dia numeric(16,2) NOT NULL,
+	valor_total numeric(16,2) NOT NULL
+);
