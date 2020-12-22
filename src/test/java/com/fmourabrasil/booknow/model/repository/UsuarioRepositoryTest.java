@@ -25,7 +25,7 @@ public class UsuarioRepositoryTest {
 	@Test
 	public void deveVerificarExistenciaDeUmEmail() {
 		// cenário		
-		LocalDate data = LocalDate.parse("09/07/1989", Auxiliares.formatoData());
+		LocalDate data = LocalDate.parse("09/07/1989", Auxiliares.retornaFormatoData("dmy"));
 		Usuario usuario = Usuario.builder().nome("teste").email("teste@email.com").senha("123456").dataCadastro(data).build();
 		repository.save(usuario);
 		

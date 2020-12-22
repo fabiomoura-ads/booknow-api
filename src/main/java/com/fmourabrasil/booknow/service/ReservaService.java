@@ -9,7 +9,7 @@ import com.fmourabrasil.booknow.model.entity.Veiculo;
 
 public interface ReservaService {
 
-	Reserva salvar(Reserva reserva);
+	Reserva novaReserva(Reserva reserva);
 	
 	Reserva atualizar(Reserva reserva);
 	
@@ -17,7 +17,7 @@ public interface ReservaService {
 	
 	Reserva atualizarStatus(Reserva reserva);	
 	
-	void verificaPossibilidadeDeReserva(Veiculo veiculo, Usuario usuario);
+	void verificaPossibilidadeDeReserva(Reserva reserva);
 	
 	List<Reserva> listar();
 	

@@ -4,6 +4,8 @@ public enum MarcaVeiculo {
 
 	CHEVROLET,
 	HONDA,
+	FIAT,
 	MERCEDES,
-	VOLKSWAGEN	
+	VOLKSWAGEN,
+	HYUNDAI
 }

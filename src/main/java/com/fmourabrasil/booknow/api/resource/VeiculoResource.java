@@ -74,6 +74,19 @@ public class VeiculoResource {
 		}
 	}
 
+	@GetMapping("{id}")
+	public ResponseEntity atualizar(@PathVariable("id") Long id) {
+		try {
+
+			Veiculo veiculo = service.buscarPorId(id);
+
+			return new ResponseEntity(veiculo, HttpStatus.OK);
+
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().body(e);
+		}
+	}
+	
 	private Veiculo converteDtoParaModelo(VeiculoDTO dto) {
 		return Veiculo.builder().id(dto.getId()).nome(dto.getNome()).marca(MarcaVeiculo.valueOf(dto.getMarca())).placa(dto.getPlaca())
 				.ano(dto.getAno()).situacao(SituacaoVeiculo.valueOf(dto.getSituacao())).valorDia(dto.getValorDia()).build();

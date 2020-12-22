@@ -1,5 +1,6 @@
 package com.fmourabrasil.booknow.service.impl;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -21,13 +22,13 @@ public class UsuarioServiceImpl implements UsuarioService {
 	@Override
 	public Usuario autenticar(String email, String senha) {
 		Optional<Usuario> optUsuario = repository.findByEmail(email);
-				
-		if (!optUsuario.isPresent()) {			
+
+		if (!optUsuario.isPresent()) {
 			throw new RegraNegocioException("Usuário não encontrado para o e-mail informado.");
 		}
-		
-		if (!optUsuario.get().getSenha().equals(senha)) {			
-			throw new RegraNegocioException("Senha incorreta.");			
+
+		if (!optUsuario.get().getSenha().equals(senha)) {
+			throw new RegraNegocioException("Senha incorreta.");
 		}
 
 		return optUsuario.get();
@@ -46,6 +47,20 @@ public class UsuarioServiceImpl implements UsuarioService {
 		if (repository.existsByEmail(email)) {
 			throw new RegraNegocioException("Já existe um usuário com o email informado.");
 		}
+	}
+
+	@Override
+	public Usuario obterPorId(Long id) {
+		Optional<Usuario> optUsuario = repository.findById(id);
+		if (!optUsuario.isPresent()) {
+			throw new RegraNegocioException("Usuário não localizado pelo ID informado");
+		}
+		return optUsuario.get();
+	}
+
+	@Override
+	public List<Usuario> listar() {
+		return repository.findAll();				
 	}
 
 }
