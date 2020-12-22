@@ -14,8 +14,7 @@ CREATE TABLE veiculo (
 	marca character varying(100) NOT NULL,
 	placa character varying(20) NOT NULL,	
 	ano character varying(4) NOT NULL,
-	imagem character varying(255),  
-	situacao character varying(30) NOT NULL CHECK ( situacao in ('DISPONIVEL', 'INDISPONIVEL', 'ALUGADO', 'RESERVADO' ) ),
+	imagem character varying(255),  	
 	valor_dia numeric(16,2) NOT NULL,
 	data_cadastro date DEFAULT NOW()
 );
@@ -27,10 +26,10 @@ CREATE TABLE reserva (
 	id_veiculo bigint REFERENCES veiculo(id) NOT NULL,
 	data_inicio date NOT NULL,
 	data_fim date NOT NULL,
-	situacao character varying(30) NOT NULL CHECK ( situacao in ( 'EFETIVADA', 'CANCELADA', 'CONCLUIDA' ) ),
+	situacao character varying(30) NOT NULL CHECK ( situacao in ( 'PENDENTE', 'CONFIRMADA', 'EFETIVADA', 'CANCELADA', 'CONCLUIDA' ) ),
 	valor_dia numeric(16,2) NOT NULL,
 	valor_total numeric(16,2) NOT NULL,
-	data_cadastro date DEFAULT NOW()	
+	data_cadastro date DEFAULT NOW()
 );
 
 insert into VEICULO ( nome, descricao, marca, placa, ano, imagem, situacao, valor_dia ) 
@@ -41,7 +40,6 @@ values ( 'Fiat Argo 1.6', 'Fiat Argo Vermelho Com Sistema Start & Stop.', 'FIAT'
 
 insert into VEICULO ( nome, descricao, marca, placa, ano, imagem, situacao, valor_dia ) 
 values ( 'HB20 1.6', 'HB20 Sedan, Hyundai HB20 Nova Geração, o primeiro carro popular da Hyundai, chega no mercado como uma das melhores opções em custo manutenção e espaço', 'HYUNDAI', 'HBX-1059', 2020, 'https://citycaraluguel.com.br/content/produto/19/produto0hb20s.png', 'DISPONIVEL', 90.00)
-
 
 insert into VEICULO ( nome, descricao, marca, placa, ano, imagem, situacao, valor_dia ) 
 values ( 'Fiat Argo 1.0', 'Fiat Argo Branco Com Sistema Start & Stop Reduza o Consumo e a Emissão de Gases Nocivos.', 'FIAT', 'NHX-3005', 2020, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRgy2OPl1VitiihUXwSxfiarUC8Hz9Bm6Umow&usqp=CAU', 'DISPONIVEL', 110.00)

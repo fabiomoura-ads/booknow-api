@@ -1,7 +1,6 @@
 package com.fmourabrasil.booknow.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import com.fmourabrasil.booknow.model.entity.Veiculo;
 

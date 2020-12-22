@@ -17,7 +17,6 @@ import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fmourabrasil.booknow.model.enums.MarcaVeiculo;
-import com.fmourabrasil.booknow.model.enums.SituacaoVeiculo;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -54,10 +53,6 @@ public class Veiculo {
 
 	@Column(name = "imagem")
 	private String imagem;
-	
-	@Column(name = "situacao")
-	@Enumerated(value = EnumType.STRING)
-	private SituacaoVeiculo situacao;
 
 	@Column(name = "valor_dia")
 	private BigDecimal valorDia;

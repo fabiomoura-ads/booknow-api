@@ -1,7 +1,9 @@
 package com.fmourabrasil.booknow.model.enums;
 
 public enum SituacaoReserva {
-	EFETIVADA, 
-	CANCELADA, 
+	PENDENTE, 
+	CONFIRMADA,
+	EFETIVADA,
+	CANCELADA,
 	CONCLUIDA
 }

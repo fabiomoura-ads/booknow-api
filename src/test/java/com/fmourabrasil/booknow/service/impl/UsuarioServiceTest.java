@@ -16,7 +16,7 @@ public class UsuarioServiceTest {
 
 	UsuarioRepository repository;
 	
-	@Test
+	//@Test
 	public void deveVerificarExistenciaDeUmEmail() {
 		//cenário
 		Usuario usuario = Usuario.builder().nome("teste").email("teste@email.com").senha("123456").build();

@@ -1,5 +1,7 @@
 package com.fmourabrasil.booknow.service.impl;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -11,12 +13,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import com.fmourabrasil.booknow.exceptions.RegraNegocioException;
 import com.fmourabrasil.booknow.model.entity.Reserva;
 import com.fmourabrasil.booknow.model.entity.Usuario;
 import com.fmourabrasil.booknow.model.entity.Veiculo;
+import com.fmourabrasil.booknow.model.enums.SituacaoReserva;
 import com.fmourabrasil.booknow.model.repository.ReservaRepository;
 import com.fmourabrasil.booknow.model.repository.UsuarioRepository;
 import com.fmourabrasil.booknow.model.repository.VeiculoRepository;
+import com.fmourabrasil.booknow.service.ReservaService;
 import com.fmourabrasil.booknow.util.Auxiliares;
 
 @SpringBootTest
@@ -33,7 +38,10 @@ public class ReservaServiceTeste {
 	@Autowired
 	ReservaRepository repository;
 
-	@Test
+	@Autowired
+	ReservaService service;
+	
+	
 	public void deveGravarUmaReservaComSucesso() {
 
 		// cenário
@@ -47,7 +55,7 @@ public class ReservaServiceTeste {
 		Reserva reserva = Reserva.builder().usuario(usuario).veiculo(veiculo).dataInicio(dataInicio).dataFim(dataFim)
 				.build();
 
-		reserva.preparaNovaReserva();
+		reserva.calculaValorTotalDaReserva();
 
 		repository.save(reserva);
 
@@ -64,18 +72,37 @@ public class ReservaServiceTeste {
 			System.out.println("O veículo está indisponível");	
 		} else {
 			System.out.println("O veículo está disponível");
-		}
-		
-		
-
-		// execução
-		// Reserva reservaSalva =
-
-		// verificação
-		/// Assertions.assertThat(reservaSalva.getId()).isNotNull();
-
-		System.err.println(reserva);
+		}		
 
 	}
+	
+	//@Test
+	public void avaliaAtualizacaoSituacaoReserva() {
+
+		// cenário
+		Usuario usuario = Usuario.builder().email("teste@email.com").senha("123456").build();
+		Veiculo veiculo = Veiculo.builder().nome("Carro1").valorDia(BigDecimal.valueOf(150)).build();
+		usuarioRepository.save(usuario);
+		veiculoRepository.save(veiculo);
+
+		LocalDate dataInicio = Auxiliares.converteDataStringParaLocalDate("2020-12-23");
+		LocalDate dataFim = Auxiliares.converteDataStringParaLocalDate("2020-12-30");
+		Reserva reserva = Reserva.builder().usuario(usuario).veiculo(veiculo).dataInicio(dataInicio).dataFim(dataFim)
+				.build();
+
+		reserva.calculaValorTotalDaReserva();
+		repository.save(reserva);
+		
+		reserva.setSituacao(SituacaoReserva.CONFIRMADA);
+		
+		//assertThrows(RegraNegocioException.class, () -> service.avaliaAtualizacaoSituacaoDaReserva(reserva));
+		
+		//service.avaliaAtualizacaoSituacaoDaReserva(reserva);
+		
+		reserva.setSituacao(SituacaoReserva.EFETIVADA);
+		
+		//assertThrows(RegraNegocioException.class, () -> service.avaliaAtualizacaoSituacaoDaReserva(reserva));
+		
+	}	
 
 }

@@ -1,11 +1,10 @@
 package com.fmourabrasil.booknow.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import com.fmourabrasil.booknow.model.entity.Reserva;
 import com.fmourabrasil.booknow.model.entity.Usuario;
-import com.fmourabrasil.booknow.model.entity.Veiculo;
+import com.fmourabrasil.booknow.model.enums.SituacaoReserva;
 
 public interface ReservaService {
 
@@ -15,11 +14,17 @@ public interface ReservaService {
 	
 	Reserva deletar(Reserva reserva);
 	
-	Reserva atualizarStatus(Reserva reserva);	
+	Reserva atualizaSituacao(Reserva reserva, SituacaoReserva situacao);	
 	
-	void verificaPossibilidadeDeReserva(Reserva reserva);
+	void verificaPossibilidadeDaReserva(Reserva reserva);
 	
 	List<Reserva> listar();
 	
-	Optional<Reserva> buscarPorId(Long id);
+	Reserva buscarPorId(Long id);
+	
+	void validaReserva(Reserva reserva);
+		
+	void avaliaAtualizacaoSituacaoDaReserva(Reserva reserva, SituacaoReserva situacao);
+	
+	List<Reserva> retornaReservasDoUsuario(Usuario usuario);
 }

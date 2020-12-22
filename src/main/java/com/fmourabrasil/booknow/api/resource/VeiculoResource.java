@@ -11,13 +11,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fmourabrasil.booknow.api.dto.VeiculoDTO;
 import com.fmourabrasil.booknow.model.entity.Veiculo;
 import com.fmourabrasil.booknow.model.enums.MarcaVeiculo;
-import com.fmourabrasil.booknow.model.enums.SituacaoVeiculo;
 import com.fmourabrasil.booknow.service.VeiculoService;
 
 import lombok.RequiredArgsConstructor;
@@ -89,7 +87,7 @@ public class VeiculoResource {
 	
 	private Veiculo converteDtoParaModelo(VeiculoDTO dto) {
 		return Veiculo.builder().id(dto.getId()).nome(dto.getNome()).marca(MarcaVeiculo.valueOf(dto.getMarca())).placa(dto.getPlaca())
-				.ano(dto.getAno()).situacao(SituacaoVeiculo.valueOf(dto.getSituacao())).valorDia(dto.getValorDia()).build();
+				.ano(dto.getAno()).valorDia(dto.getValorDia()).build();
 	}
 
 	@GetMapping("/marcas")
@@ -97,14 +95,6 @@ public class VeiculoResource {
 
 		MarcaVeiculo[] marcas = MarcaVeiculo.values();
 		return ResponseEntity.ok(marcas);
-
-	}
-
-	@GetMapping("/situacoes")
-	public ResponseEntity<SituacaoVeiculo[]> situacoes() {
-
-		SituacaoVeiculo[] situacoes = SituacaoVeiculo.values();
-		return ResponseEntity.ok(situacoes);
 
 	}
 

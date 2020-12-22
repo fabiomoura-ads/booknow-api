@@ -22,7 +22,7 @@ public class UsuarioRepositoryTest {
 	@Autowired
 	UsuarioRepository repository;
 
-	@Test
+	//@Test
 	public void deveVerificarExistenciaDeUmEmail() {
 		// cenário		
 		LocalDate data = LocalDate.parse("09/07/1989", Auxiliares.retornaFormatoData("dmy"));
@@ -37,7 +37,7 @@ public class UsuarioRepositoryTest {
 
 	}
 	
-	@Test
+	//@Test
 	public void deveRetornarFalsoAoTentarLocalizarUsuarioPorEmail() {
 		// cenário		
 		Usuario usuario = Usuario.builder().nome("teste").email("teste@email.com").senha("123456").build();
@@ -51,7 +51,7 @@ public class UsuarioRepositoryTest {
 
 	}
 	
-	@Test
+	//@Test
 	public void deveLocalizarUsuarioPorEmail() {
 		// cenário		
 		Usuario usuario = Usuario.builder().nome("teste").email("teste1@email.com").senha("123456").build();

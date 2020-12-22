@@ -20,13 +20,17 @@ import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 import com.fmourabrasil.booknow.exceptions.RegraNegocioException;
 import com.fmourabrasil.booknow.model.enums.SituacaoReserva;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "reserva")
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Reserva {
 
 	@Id
@@ -59,16 +63,16 @@ public class Reserva {
 	@Enumerated(value = EnumType.STRING)
 	private SituacaoReserva situacao;
 
-	private void calculaValorTotalDaReserva() {
+	public void calculaValorTotalDaReserva() {
 
 		if (this.dataInicio == null) {
-			throw new RegraNegocioException("A data início da resera deve ser informado antes da data fim.");
+			throw new RegraNegocioException("A data início da reserva deve ser informado antes da data fim.");
 		}
 
 		Integer qtdDiasReserva = dataFim.compareTo(this.dataInicio) + 1;
 
-		if (dataFim.compareTo(this.dataInicio) <= 0) {
-			throw new RegraNegocioException("A data fim da resera não pode ser menor que a data início.");
+		if (dataFim.compareTo(this.dataInicio) < 0) {
+			throw new RegraNegocioException("A data fim da reserva não pode ser menor que a data início.");
 		}
 
 		this.valorDia = this.veiculo.getValorDia();
@@ -77,9 +81,5 @@ public class Reserva {
 
 	}
 
-	public void preparaNovaReserva() {
-		this.calculaValorTotalDaReserva();
-		this.setSituacao(SituacaoReserva.EFETIVADA);
-	}
 
 }

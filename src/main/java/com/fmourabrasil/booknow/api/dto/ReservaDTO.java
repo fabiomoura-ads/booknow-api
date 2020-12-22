@@ -14,4 +14,5 @@ public class ReservaDTO {
 	private Long idVeiculo;
 	private String dataInicio;
 	private String dataFim;
+	private String situacao;
 }
