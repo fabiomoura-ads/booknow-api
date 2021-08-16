@@ -18,13 +18,14 @@ public class VeiculoServiceImpl implements VeiculoService {
 
 	@Autowired
 	private VeiculoRepository repository;
-	
+
 	@Override
 	public Veiculo salvar(Veiculo veiculo) {
-		if (repository.existsByPlaca(veiculo.getPlaca())) {
-			throw new RegraNegocioException("Já existe um veículo cadastrado com essa placa!");
-		}
+		repository.existsByPlaca(veiculo.getPlaca())
+				.orElseThrow(() -> new RegraNegocioException("Já existe um veículo cadastrado com essa placa!"));
+
 		validarDados(veiculo);
+
 		return repository.save(veiculo);
 	}
 
@@ -32,6 +33,23 @@ public class VeiculoServiceImpl implements VeiculoService {
 	public Veiculo atualizar(Veiculo veiculo) {
 		Objects.requireNonNull(veiculo.getId());
 		return repository.save(veiculo);
+	}
+
+	@Override
+	public List<Veiculo> listar() {
+		return repository.findAll();
+	}
+
+	@Override
+	public void deletar(Veiculo veiculo) {
+		Objects.requireNonNull(veiculo.getId());
+		repository.delete(veiculo);
+	}
+
+	@Override
+	public Veiculo buscarPorId(Long id) {
+		return repository.findById(id)
+				.orElseThrow(() -> new RegraNegocioException("Veículo não localizado pelo ID informado!"));
 	}
 
 	@Override
@@ -54,26 +72,6 @@ public class VeiculoServiceImpl implements VeiculoService {
 		if (veiculo.getValorDia() == null || veiculo.getValorDia().equals(BigDecimal.ZERO)) {
 			throw new RegraNegocioException("Informe o valor do aluguel x dia do veículo.");
 		}
-	}
-
-	@Override
-	public List<Veiculo> listar() {
-		return repository.findAll();
-	}
-
-	@Override
-	public void deletar(Veiculo veiculo) {
-		Objects.requireNonNull(veiculo.getId());
-		repository.delete(veiculo);		
-	}
-
-	@Override
-	public Veiculo buscarPorId(Long id) {
-		Optional<Veiculo> optVeiculo = repository.findById(id);
-		if ( !optVeiculo.isPresent() ) {
-			throw new RegraNegocioException("Veículo não localizado pelo ID informado!");
-		}
-		return optVeiculo.get();
 	}
 
 }

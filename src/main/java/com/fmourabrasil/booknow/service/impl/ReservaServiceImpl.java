@@ -27,19 +27,16 @@ public class ReservaServiceImpl implements ReservaService {
 
 	@Override
 	public Reserva novaReserva(Reserva reserva) {
-		this.validaReserva(reserva);
+		reserva.preparaNovaReserva();
 		this.verificaPossibilidadeDaReserva(reserva);
-		reserva.calculaValorTotalDaReserva();
-		reserva.setSituacao(SituacaoReserva.PENDENTE);
 		return repository.save(reserva);
 	}
 
 	@Override
 	public Reserva atualizar(Reserva reserva) {
 		Objects.requireNonNull(reserva.getId());
-		this.validaReserva(reserva);
+		reserva.validaReserva().calculaValorTotalDaReserva();
 		this.verificaPossibilidadeDaReserva(reserva);
-		reserva.calculaValorTotalDaReserva();
 		return repository.save(reserva);
 	}
 
@@ -75,71 +72,54 @@ public class ReservaServiceImpl implements ReservaService {
 
 	@Override
 	public Reserva buscarPorId(Long id) {
-		Optional<Reserva> optReserva = repository.findById(id);
-		if (!optReserva.isPresent()) {
-			throw new RegraNegocioException("Reserva não localizada pelo ID informado.");
-		}
-		return optReserva.get();
-	}
-
-	@Override
-	public void validaReserva(Reserva reserva) {
-		if (reserva.getVeiculo() == null || reserva.getVeiculo().getId() == null) {
-			throw new RegraNegocioException("O veículo não foi informado para o cadastro da reserva.");
-		}
-
-		if (reserva.getUsuario() == null || reserva.getUsuario().getId() == null) {
-			throw new RegraNegocioException("O usuário não foi informado para o cadastro da reserva.");
-		}
-
-		if (reserva.getDataInicio() == null) {
-			throw new RegraNegocioException("A data início da reserva deve ser informada.");
-		}
-
-		if (reserva.getDataFim() == null) {
-			throw new RegraNegocioException("A data fim da reserva deve ser informada.");
-		}
-
-		if (reserva.getDataFim().compareTo(reserva.getDataInicio()) < 0) {
-			throw new RegraNegocioException("A data fim da reserva não pode ser menor que a data de início.");
-		}
-
+		return repository.findById(id)
+				.orElseThrow(() -> new RegraNegocioException("Reserva não localizada pelo ID informado."));
 	}
 
 	@Override
 	public void avaliaAtualizacaoSituacaoDaReserva(Reserva reserva, SituacaoReserva situacao) {
 
-		if (reserva.getSituacao().equals(SituacaoReserva.CANCELADA) || reserva.getSituacao().equals(SituacaoReserva.CONCLUIDA)) {
-			throw new RegraNegocioException("A reserva " + reserva.getSituacao().name() + " não pode ser alterada.");
+		if (reserva.getSituacao().equals(SituacaoReserva.CANCELADA)
+				|| reserva.getSituacao().equals(SituacaoReserva.CONCLUIDA)) {
+			throw new RegraNegocioException(
+					String.format("A reserva %s não pode ser alterada.", reserva.getSituacao().name()));
 		}
 
 		if (situacao.equals(SituacaoReserva.CONFIRMADA) || situacao.equals(SituacaoReserva.CANCELADA)) {
 
-			if (reserva.getSituacao().equals(SituacaoReserva.PENDENTE) && reserva.getDataInicio().compareTo(LocalDate.now()) < 0) {
-				throw new RegraNegocioException(
-						"A reserva está expirada, deve ser " + situacao.name() + " até 1 dia antes da data de início da reserva.");
+			if (reserva.getSituacao().equals(SituacaoReserva.PENDENTE)
+					&& reserva.getDataInicio().compareTo(LocalDate.now()) < 0) {
+
+				throw new RegraNegocioException(String.format(
+						"A reserva está expirada, deve ser %s até 1 dia antes da data de início da reserva.",
+						situacao.name()));
 			}
-			
-			if ( !reserva.getSituacao().equals(SituacaoReserva.PENDENTE) && !reserva.getSituacao().equals(SituacaoReserva.CONFIRMADA) ) {
+
+			if (!reserva.getSituacao().equals(SituacaoReserva.PENDENTE)
+					&& !reserva.getSituacao().equals(SituacaoReserva.CONFIRMADA)) {
 				throw new RegraNegocioException(
-						"A reserva na situação " + reserva.getSituacao().name() + " não pode ser atualizda para " + situacao.name() + ".");				
+						String.format("A reserva na situação %s não pode ser atualizda para %s.",
+								reserva.getSituacao().name(), situacao.name()));
 			}
 
 		}
 
 		if (situacao.equals(SituacaoReserva.PENDENTE) && !reserva.getSituacao().equals(situacao)) {
-			throw new RegraNegocioException("A reserva na situação " + reserva.getSituacao().name() + " não pode ser atualizda para PENDENTE.");
+			throw new RegraNegocioException(
+					"A reserva na situação " + reserva.getSituacao().name() + " não pode ser atualizda para PENDENTE.");
 		}
 
 		if (situacao.equals(SituacaoReserva.CONCLUIDA)) {
 			if (reserva.getDataFim().compareTo(LocalDate.now()) != 0) {
-				throw new RegraNegocioException("A reserva somente pode ser " + situacao.name() + " na data fim da reserva.");
+				throw new RegraNegocioException(
+						String.format("A reserva somente pode ser %s na data fim da reserva.", situacao.name()));
 			}
 		}
 
 		if (situacao.equals(SituacaoReserva.EFETIVADA)) {
 			if (reserva.getDataInicio().compareTo(LocalDate.now()) != 0) {
-				throw new RegraNegocioException("A reserva somente pode ser " + situacao.name() +" na data de início da reserva.");
+				throw new RegraNegocioException(
+						String.format("A reserva somente pode ser %s na data de início da reserva.", situacao.name()));
 			}
 		}
 
@@ -160,7 +140,7 @@ public class ReservaServiceImpl implements ReservaService {
 			}
 		}
 
-		reserva.setSituacao(situacao);		
+		reserva.setSituacao(situacao);
 
 	}
 

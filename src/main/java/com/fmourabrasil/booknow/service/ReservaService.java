@@ -21,8 +21,6 @@ public interface ReservaService {
 	List<Reserva> listar();
 	
 	Reserva buscarPorId(Long id);
-	
-	void validaReserva(Reserva reserva);
 		
 	void avaliaAtualizacaoSituacaoDaReserva(Reserva reserva, SituacaoReserva situacao);
 	

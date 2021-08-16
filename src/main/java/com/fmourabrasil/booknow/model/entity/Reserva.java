@@ -63,7 +63,7 @@ public class Reserva {
 	@Enumerated(value = EnumType.STRING)
 	private SituacaoReserva situacao;
 
-	public void calculaValorTotalDaReserva() {
+	public Reserva calculaValorTotalDaReserva() {
 
 		if (this.dataInicio == null) {
 			throw new RegraNegocioException("A data início da reserva deve ser informado antes da data fim.");
@@ -79,7 +79,38 @@ public class Reserva {
 
 		this.valorTotal = this.valorDia.multiply(BigDecimal.valueOf(qtdDiasReserva));
 
+		return this;
 	}
+	
+	public Reserva validaReserva() {
+		if (this.getVeiculo() == null || this.getVeiculo().getId() == null) {
+			throw new RegraNegocioException("O veículo não foi informado para o cadastro da reserva.");
+		}
+
+		if (this.getUsuario() == null || this.getUsuario().getId() == null) {
+			throw new RegraNegocioException("O usuário não foi informado para o cadastro da reserva.");
+		}
+
+		if (this.getDataInicio() == null) {
+			throw new RegraNegocioException("A data início da reserva deve ser informada.");
+		}
+
+		if (this.getDataFim() == null) {
+			throw new RegraNegocioException("A data fim da reserva deve ser informada.");
+		}
+
+		if (this.getDataFim().compareTo(this.getDataInicio()) < 0) {
+			throw new RegraNegocioException("A data fim da reserva não pode ser menor que a data de início.");
+		}	
+		
+		return this;
+
+	}
+
+	public void preparaNovaReserva() {
+		this.validaReserva().calculaValorTotalDaReserva().setSituacao(SituacaoReserva.PENDENTE);
+		
+	}	
 
 
 }
