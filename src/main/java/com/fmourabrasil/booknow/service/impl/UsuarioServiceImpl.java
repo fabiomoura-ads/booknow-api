@@ -1,6 +1,7 @@
 package com.fmourabrasil.booknow.service.impl;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,46 +21,32 @@ public class UsuarioServiceImpl implements UsuarioService {
 
 	@Override
 	public Usuario autenticar(String email, String senha) {
-		Optional<Usuario> optUsuario = repository.findByEmail(email);
-
-		if (!optUsuario.isPresent()) {
-			throw new RegraNegocioException("Usuário não encontrado para o e-mail informado.");
-		}
-
-		if (!optUsuario.get().getSenha().equals(senha)) {
-			throw new RegraNegocioException("Senha incorreta.");
-		}
-
-		return optUsuario.get();
+		return repository.findByEmailAndSenha(email, senha)
+				.orElseThrow(() -> new RegraNegocioException("Usuário ou senha inválido."));
 	}
 
 	@Override
 	@Transactional
 	public Usuario salvar(Usuario usuario) {
 		this.validarEmail(usuario.getEmail());
-		repository.save(usuario);
-		return null;
+		return repository.save(usuario);
 	}
 
 	@Override
 	public void validarEmail(String email) {
-		if (repository.existsByEmail(email)) {
-			throw new RegraNegocioException("Já existe um usuário com o email informado.");
-		}
+		repository.findByEmail(email)
+				.orElseThrow(() -> new RegraNegocioException("Já existe um usuário com o email informado."));
 	}
 
 	@Override
 	public Usuario obterPorId(Long id) {
-		Optional<Usuario> optUsuario = repository.findById(id);
-		if (!optUsuario.isPresent()) {
-			throw new RegraNegocioException("Usuário não localizado pelo ID informado");
-		}
-		return optUsuario.get();
+		return repository.findById(id)
+				.orElseThrow(() -> new RegraNegocioException("Usuário não localizado pelo ID informado"));
 	}
 
 	@Override
 	public List<Usuario> listar() {
-		return repository.findAll();				
+		return repository.findAll();
 	}
 
 }
