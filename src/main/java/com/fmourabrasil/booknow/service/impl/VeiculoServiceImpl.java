@@ -47,9 +47,8 @@ public class VeiculoServiceImpl implements VeiculoService {
 	}
 
 	@Override
-	public Veiculo buscarPorId(Long id) {
-		return repository.findById(id)
-				.orElseThrow(() -> new RegraNegocioException("Veículo não localizado pelo ID informado!"));
+	public Optional<Veiculo> buscarPorId(Long id) {
+		return repository.findById(id);
 	}
 
 	@Override

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fmourabrasil.booknow.api.dto.ReservaDTO;
+import com.fmourabrasil.booknow.exceptions.RegraNegocioException;
 import com.fmourabrasil.booknow.model.entity.Reserva;
 import com.fmourabrasil.booknow.model.entity.Usuario;
 import com.fmourabrasil.booknow.model.entity.Veiculo;
@@ -93,7 +94,7 @@ public class ReservaResource {
 	
 	private Reserva converteDtoParaModelo(ReservaDTO dto) {
 		Usuario usuario = usuarioService.obterPorId(dto.getIdUsuario());
-		Veiculo veiculo = veiculoService.buscarPorId(dto.getIdVeiculo());
+		Veiculo veiculo = veiculoService.buscarPorId(dto.getIdVeiculo()).orElseThrow(() -> new RegraNegocioException("Veículo não localizado pelo ID informado!"));
 
 		Reserva reserva = Reserva.builder().veiculo(veiculo).usuario(usuario)
 				.dataInicio(Auxiliares.converteDataStringParaLocalDate(dto.getDataInicio()))

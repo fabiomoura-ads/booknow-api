@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fmourabrasil.booknow.api.dto.VeiculoDTO;
+import com.fmourabrasil.booknow.exceptions.RegraNegocioException;
 import com.fmourabrasil.booknow.model.entity.Veiculo;
 import com.fmourabrasil.booknow.model.enums.MarcaVeiculo;
 import com.fmourabrasil.booknow.service.VeiculoService;
@@ -49,11 +50,11 @@ public class VeiculoResource {
 
 			Veiculo veiculo = converteDtoParaModelo(dto);
 
-			service.buscarPorId(veiculo.getId());
+			return service.buscarPorId(veiculo.getId()).map(entity -> {
+				Veiculo veiculoSalvo = service.atualizar(veiculo);
+				return new ResponseEntity(veiculoSalvo, HttpStatus.CREATED);
 
-			Veiculo veiculoSalvo = service.atualizar(veiculo);
-
-			return new ResponseEntity(veiculoSalvo, HttpStatus.CREATED);
+			}).orElseThrow(() -> new RegraNegocioException("Veículo não localizado pelo ID informado!"));
 
 		} catch (Exception e) {
 			return ResponseEntity.badRequest().body(e);
@@ -65,8 +66,8 @@ public class VeiculoResource {
 		try {
 
 			List<Veiculo> lista = service.listar();
-
 			return new ResponseEntity(lista, HttpStatus.OK);
+			
 		} catch (Exception e) {
 			return ResponseEntity.badRequest().body(e.getMessage());
 		}
@@ -76,18 +77,17 @@ public class VeiculoResource {
 	public ResponseEntity atualizar(@PathVariable("id") Long id) {
 		try {
 
-			Veiculo veiculo = service.buscarPorId(id);
-
-			return new ResponseEntity(veiculo, HttpStatus.OK);
+			return service.buscarPorId(id).map(entity -> new ResponseEntity(entity, HttpStatus.OK))
+					.orElseThrow(() -> new RegraNegocioException("Veículo não localizado pelo ID informado!"));
 
 		} catch (Exception e) {
 			return ResponseEntity.badRequest().body(e);
 		}
 	}
-	
+
 	private Veiculo converteDtoParaModelo(VeiculoDTO dto) {
-		return Veiculo.builder().id(dto.getId()).nome(dto.getNome()).marca(MarcaVeiculo.valueOf(dto.getMarca())).placa(dto.getPlaca())
-				.ano(dto.getAno()).valorDia(dto.getValorDia()).build();
+		return Veiculo.builder().id(dto.getId()).nome(dto.getNome()).marca(MarcaVeiculo.valueOf(dto.getMarca()))
+				.placa(dto.getPlaca()).ano(dto.getAno()).valorDia(dto.getValorDia()).build();
 	}
 
 	@GetMapping("/marcas")
@@ -102,14 +102,12 @@ public class VeiculoResource {
 	public ResponseEntity deletar(@PathVariable("id") Long id) {
 		try {
 
-			Veiculo veiculo = service.buscarPorId(id);
-
-			service.deletar(veiculo);
-
-			return new ResponseEntity(HttpStatus.NO_CONTENT);
+			return service.buscarPorId(id).map(entity -> {
+				service.deletar(entity);
+				return new ResponseEntity(HttpStatus.NO_CONTENT);
+			}).orElseThrow(() -> new RegraNegocioException("Veículo não localizado pelo ID informado!"));
 
 		} catch (Exception e) {
-			System.out.println("Erro " + e.getMessage());
 			return ResponseEntity.badRequest().body(e.getMessage());
 		}
 
