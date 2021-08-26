@@ -32,7 +32,7 @@ public class VeiculoRepositoryTest {
 		entityManager.persist(retornaVeiculo());
 
 		// execução 
-		repository.findByPlaca("OCG-1111")
+		repository.existsByPlaca("OCG-1111")
 		
 		//verificação
 		.map(entity -> Assertions.assertThat(entity.getId()).isNotNull())
@@ -46,7 +46,7 @@ public class VeiculoRepositoryTest {
 		entityManager.persist(retornaVeiculo());
 		
 		// execução
-		repository.findByPlaca("OCG-1112")
+		repository.existsByPlaca("OCG-1112")
 		
 		//verificação
 		.map(entity -> {
