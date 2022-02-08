@@ -1,6 +1,7 @@
 package com.fmourabrasil.booknow.service.impl;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,14 +27,17 @@ public class UsuarioServiceImpl implements UsuarioService {
 	@Override
 	@Transactional
 	public Usuario salvar(Usuario usuario) {
+		System.out.println("Validando email " + usuario.getEmail());
 		this.validarEmail(usuario.getEmail());
+		System.out.println("Validado");
 		return repository.save(usuario);
 	}
 
 	@Override
 	public void validarEmail(String email) {
-		repository.findByEmail(email)
-				.orElseThrow(() -> new RegraNegocioException("Já existe um usuário com o email informado."));
+		if ( repository.findByEmail(email).isPresent() ) {
+			throw new RegraNegocioException("Já existe um usuário com o email informado.");
+		}
 	}
 
 	@Override
